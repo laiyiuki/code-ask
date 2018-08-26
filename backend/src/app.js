@@ -1,10 +1,11 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
+const socketIO = require('socket.io');
 
 require('./mongoose');
-
 const api = require('./api');
+
 const app = express();
 
 app
@@ -18,6 +19,13 @@ app
   )
   .use('/api', api);
 
-app.listen(3030, () => {
+const server = app.listen(3030, () => {
   console.log('Server is running at port 3030');
+});
+
+const io = socketIO(server);
+
+io.on('connection', client => {
+  console.log('client connected');
+  io.sockets.emit('Hello', { msg: 'Hello' });
 });
